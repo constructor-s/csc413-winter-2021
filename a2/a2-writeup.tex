@@ -498,9 +498,6 @@ The skip connections did not improve validation loss as compared to the previous
 for param in model.parameters():
     param.requires_grad = False
 model.classifier[-1] = nn.Conv2d(256, 2, kernel_size=(1, 1), stride=(1, 1))
-# for i in range(4):
-#     model.classifier[i].requires_grad_(False)
-# model.backbone.requires_grad_(False)
 ######################################################
 \end{lstlisting}
 
