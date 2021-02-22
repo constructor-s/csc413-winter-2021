@@ -10,6 +10,7 @@
 \usepackage{physics}
 
 \usepackage{graphicx}
+\usepackage{booktabs}
 
 \usepackage{xcolor}
 \usepackage{listings}
@@ -159,11 +160,87 @@ The images appear blurry because in the network they were up-sampled from 8x8 ba
 
 \subsection*{3 Compute the number of weights, outputs, and connections in the model}
 
-\todo{Check Piazza}
+% \todo{Check Piazza}
+
+For 32x32 inputs:
+
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+% \begin{table}[]
+\begin{tiny}
+\setlength\tabcolsep{1.5pt}
+\begin{tabular}{@{}lllllllllll@{}}
+\toprule
+      & Kernel Size                 & K                    & 3  &       &                &   &        &                                &   &          \\ 
+      & Number of Input Channels    & NIC                  & 3  &       &                &   &        &                                &   &          \\
+      & Number of Filters           & NF                   & 32 &       &                &   &        &                                &   &          \\
+      & Number of Colours           & NC                   & 24 &       &                &   &        &                                &   &          \\
+      & Image Width                 & W                    & 32 &       &                &   &        &                                &   &          \\
+      & Image Height                & H                    & 32 &       &                &   &        &                                &   &          \\ \midrule
+\multicolumn{2}{c}{PoolUpsampleNet} & \multicolumn{3}{c}{Weights}       & \multicolumn{3}{c}{Outputs} & \multicolumn{3}{c}{Connections}               \\ \midrule
+      & Image                       &                      &    &       &                &   &        &                                &   &          \\
+0     & Conv2d                      & NF*NIC*K*K+NF        & =  & 896   & NF*H*W         & = & 32768  & (NF*NIC*K*K+NF)*H*W            & = & 917504   \\
+      & MaxPool2d                   &                      &    &       & NF*H/2*W/2     & = & 8192   & NF*H*W                         & = & 32768    \\
+      & BatchNorm2d                 & NF+NF                & =  & 64    & NF*H/2*W/2     & = & 8192   & (H/2*W/2)*(H/2*W/2)            & = & 65536    \\
+      & ReLU                        &                      &    &       & NF*H/2*W/2     & = & 8192   &                                &   &          \\
+1     & Conv2d                      & (2*NF)*NF*K*K+(2*NF) & =  & 18496 & (2*NF)*H/2*W/2 & = & 16384  & ((2*NF)*NF*K*K+(2*NF))*H/2*W/2 & = & 4734976  \\
+      & MaxPool2d                   &                      &    &       & (2*NF)*H/4*W/4 & = & 4096   & (2*NF)*H/2*W/2                 & = & 16384    \\
+      & BatchNorm2d                 & (2*NF)+(2*NF)        & =  & 128   & (2*NF)*H/4*W/4 & = & 4096   & (H/4*W/4)*(H/4*W/4)            & = & 4096     \\
+      & ReLU                        &                      &    &       & (2*NF)*H/4*W/4 & = & 4096   &                                &   &          \\
+2     & Conv2d                      & NF*(2*NF)*K*K+NF     & =  & 18464 & NF*H/4*H/4     & = & 2048   & (NF*(2*NF)*K*K+NF)*H/4*W/4     & = & 1181696  \\
+      & Upsample                    &                      &    &       & NF*H/2*W/2     & = & 8192   & NF*H/2*W/2                     & = & 8192     \\
+      & BatchNorm2d                 & NF+NF                & =  & 64    & NF*H/2*W/2     & = & 8192   & (H/2*W/2)*(H/2*W/2)            & = & 65536    \\
+      & ReLU                        &                      &    &       & NF*H/2*W/2     & = & 8192   &                                &   &          \\
+3     & Conv2d                      & NC*NF*K*K            & =  & 6912  & NC*H/2*W/2     & = & 6144   & (NC*NF*K*K)*H/2*W/2            & = & 1769472  \\
+      & Upsample                    &                      &    &       & NC*H*W         & = & 24576  & NC*H*W                         & = & 24576    \\
+      & BatchNorm2d                 & NC+NC                & =  & 48    & NC*H*W         & = & 24576  & (H*W)*(H*W)                    & = & 1048576  \\
+      & ReLU                        &                      &    &       & NC*H*W         & = & 24576  &                                &   &          \\
+4     & Conv2d                      & NC*NC*K*K+NC         & =  & 5208  & NC*H*W         & = & 24576  & (NC*NC*K*K+NC)*H*W             & = & 5332992  \\
+      &                             &                      &    &       &                &   &        &                                &   &          \\ \midrule
+      & Total                       &                      &    & 50280 &                &   & 217088 &                                &   & 15202304 \\ \bottomrule
+\end{tabular}
+\end{tiny}
+% \end{table}
 
 
+For 64x64 inputs:
 
 
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+\begin{tiny}
+\setlength\tabcolsep{1.5pt}
+\begin{tabular}{@{}lllllllllll@{}}
+\toprule
+      & Kernel Size                 & K                    & 3  &       &                &   &        &                                &   &          \\ 
+      & Number of Input Channels    & NIC                  & 3  &       &                &   &        &                                &   &          \\
+      & Number of Filters           & NF                   & 32 &       &                &   &        &                                &   &          \\
+      & Number of Colours           & NC                   & 24 &       &                &   &        &                                &   &          \\
+      & Image Width                 & W                    & 64 &       &                &   &        &                                &   &          \\
+      & Image Height                & H                    & 64 &       &                &   &        &                                &   &          \\\midrule
+\multicolumn{2}{l}{PoolUpsampleNet} & \multicolumn{3}{l}{Weights}       & \multicolumn{3}{l}{Outputs} & \multicolumn{3}{l}{Connections}               \\\midrule
+      & Image                       &                      &    &       &                &   &        &                                &   &          \\
+0     & Conv2d                      & NF*NIC*K*K+NF        & =  & 896   & NF*H*W         & = & 131072 & (NF*NIC*K*K+NF)*H*W            & = & 3670016  \\
+      & MaxPool2d                   &                      &    &       & NF*H/2*W/2     & = & 32768  & NF*H*W                         & = & 131072   \\
+      & BatchNorm2d                 & NF+NF                & =  & 64    & NF*H/2*W/2     & = & 32768  & (H/2*W/2)*(H/2*W/2)            & = & 1048576  \\
+      & ReLU                        &                      &    &       & NF*H/2*W/2     & = & 32768  &                                &   &          \\
+1     & Conv2d                      & (2*NF)*NF*K*K+(2*NF) & =  & 18496 & (2*NF)*H/2*W/2 & = & 65536  & ((2*NF)*NF*K*K+(2*NF))*H/2*W/2 & = & 18939904 \\
+      & MaxPool2d                   &                      &    &       & (2*NF)*H/4*W/4 & = & 16384  & (2*NF)*H/2*W/2                 & = & 65536    \\
+      & BatchNorm2d                 & (2*NF)+(2*NF)        & =  & 128   & (2*NF)*H/4*W/4 & = & 16384  & (H/4*W/4)*(H/4*W/4)            & = & 65536    \\
+      & ReLU                        &                      &    &       & (2*NF)*H/4*W/4 & = & 16384  &                                &   &          \\
+2     & Conv2d                      & NF*(2*NF)*K*K+NF     & =  & 18464 & NF*H/4*H/4     & = & 8192   & (NF*(2*NF)*K*K+NF)*H/4*W/4     & = & 4726784  \\
+      & Upsample                    &                      &    &       & NF*H/2*W/2     & = & 32768  & NF*H/2*W/2                     & = & 32768    \\
+      & BatchNorm2d                 & NF+NF                & =  & 64    & NF*H/2*W/2     & = & 32768  & (H/2*W/2)*(H/2*W/2)            & = & 1048576  \\
+      & ReLU                        &                      &    &       & NF*H/2*W/2     & = & 32768  &                                &   &          \\
+3     & Conv2d                      & NC*NF*K*K            & =  & 6912  & NC*H/2*W/2     & = & 24576  & (NC*NF*K*K)*H/2*W/2            & = & 7077888  \\
+      & Upsample                    &                      &    &       & NC*H*W         & = & 98304  & NC*H*W                         & = & 98304    \\
+      & BatchNorm2d                 & NC+NC                & =  & 48    & NC*H*W         & = & 98304  & (H*W)*(H*W)                    & = & 16777216 \\
+      & ReLU                        &                      &    &       & NC*H*W         & = & 98304  &                                &   &          \\
+4     & Conv2d                      & NC*NC*K*K+NC         & =  & 5208  & NC*H*W         & = & 98304  & (NC*NC*K*K+NC)*H*W             & = & 21331968 \\
+      &                             &                      &    &       &                &   &        &                                &   &          \\\midrule
+      & Total                       &                      &    & 50280 &                &   & 868352 &                                &   & 75014144 \\ \bottomrule
+\end{tabular}
+\end{tiny}
 
 \clearpage
 \section*{Part B: Strided and Transposed Convolutions}
