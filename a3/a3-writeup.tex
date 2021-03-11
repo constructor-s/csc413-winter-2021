@@ -67,6 +67,118 @@
 
 \maketitle
 
+\section*{Part 1: LSTMs}
+
+\subsection*{1. LSTM Training}
+
+\begin{quote}
+A screenshot of your \texttt{fullMyLSTMCell} implementation
+\end{quote}
+
+\begin{lstlisting}[language=Python]
+class MyLSTMCell(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(MyLSTMCell, self).__init__()
+
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+
+        # ------------
+        # FILL THIS IN
+        # ------------
+        self.Wii = nn.Linear(input_size, hidden_size)
+        self.Whi = nn.Linear(hidden_size, hidden_size)
+
+        self.Wif = nn.Linear(input_size, hidden_size)
+        self.Whf = nn.Linear(hidden_size, hidden_size)
+
+        self.Wig = nn.Linear(input_size, hidden_size)
+        self.Whg = nn.Linear(hidden_size, hidden_size)
+
+        self.Wio = nn.Linear(input_size, hidden_size)
+        self.Who = nn.Linear(hidden_size, hidden_size)
+
+
+    def forward(self, x, h_prev, c_prev):
+        """Forward pass of the LSTM computation for one time step.
+
+        Arguments
+            x: batch_size x input_size
+            h_prev: batch_size x hidden_size
+            c_prev: batch_size x hidden_size
+
+        Returns:
+            h_new: batch_size x hidden_size
+            c_new: batch_size x hidden_size
+        """
+
+        # ------------
+        # FILL THIS IN
+        # ------------
+        i = torch.sigmoid(self.Wii(x) + 
+                          self.Whi(h_prev))
+        f = torch.sigmoid(self.Wif(x) + 
+                          self.Whf(h_prev))
+        g = torch.tanh(self.Wig(x) + 
+                       self.Whg(h_prev))
+        o = torch.sigmoid(self.Wio(x) + 
+                          self.Who(h_prev))
+        c_new = f * c_prev + i * g
+        h_new = o * torch.tanh(c_new)
+        return h_new, c_new
+\end{lstlisting}
+
+
+\begin{quote}
+... the loss plots output by \texttt{save\_loss\_comparison\_lstm}
+\end{quote}
+
+\includegraphics[width=\linewidth]{loss_plot_lstm}
+
+\begin{quote}
+... and your analysis
+
+Does  either  model perform significantly better?  Why might this be the case?
+\end{quote}
+
+The \texttt{pig\_latin\_small} model performed better with lower validation loss because \todo{}.
+
+
+
+\subsection*{Model Failure}
+
+\begin{quote}
+Identify a distinct failure mode and briefly describe it.
+\end{quote}
+
+\begin{lstlisting}
+source:		bond-street print-shops are good-for-nothing 
+translated:	ondertay-inbay inptray-ospatshay areway oodgay-orfay-othingn
+
+ground-truth: ondbay-eetstray intpray-opsshay areway oodgay-orfay-othingnay
+\end{lstlisting}
+
+It appears that the model fails at words with hyphens. % and often fails at words that start with vowel, with which it often correctly adds ``-ay'' at the end but scrambles the other letters.
+
+
+\subsection*{Model size}
+
+
+\begin{quote}
+Write down the number of neurons and connections of this encoder model as a function of H, K, and D.  For simplicity, you may ignore the bias units.
+\end{quote}
+
+Number of neurons: \todo{}
+
+Number of connections: \todo{}
+
+
+
+
+
+
+
+
 
 
 \end{document}
