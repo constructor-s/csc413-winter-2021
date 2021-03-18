@@ -141,7 +141,7 @@ class MyLSTMCell(nn.Module):
 Does  either  model perform significantly better?  Why might this be the case?
 \end{quote}
 
-The \texttt{pig\_latin\_small} model performed better with lower validation loss because \todo{}.
+The \texttt{pig\_latin\_small} model performed better with lower validation loss. The small model was trained with smaller batch sizes (\texttt{'batch\_size':64}), which tend to have better generalization ability than ones trained with larger batch sizes (\texttt{'batch\_size':512}). [Reference: Keskar NS, Mudigere D, Nocedal J, Smelyanskiy M, Tang PT. On large-batch training for deep learning: Generalization gap and sharp minima. arXiv preprint arXiv:1609.04836. 2016 Sep 15.]
 
 
 
@@ -174,6 +174,39 @@ Number of connections: \todo{}
 
 
 
+\section*{Part 2: Additive Attention}
+
+\subsection*{1}
+
+\begin{align*}
+\tilde{\alpha}^{(t)}_i &= W_2^\intercal \textrm{ReLU} ( W_1^\intercal 
+\begin{bmatrix}
+Q_t \\ K_i
+\end{bmatrix} 
+)
+\\
+\alpha^{(t)}_i &= \textrm{softmax}(\tilde{\alpha}^{(t)})_i = \frac
+{\exp(\tilde{\alpha}^{(t)}_i)}
+{\sum_{j=1}^{\textrm{seq\_len}} \exp(\tilde{\alpha}^{(t)}_j) }
+\\
+c_t &= {\alpha^{(t)}}^\intercal K = \sum_{i=1}^{\textrm{seq\_len}} \alpha^{(t)}_i K_i
+\end{align*}
+
+\subsection*{2}
+\includegraphics[width=\linewidth]{loss_additive_attention}
+\todo{}
+
+\subsection*{3}
+The training speed is faster with the attention model which reached less than $1.0$ validation loss within 7 epochs, whereas previously it took the ``small'' non-attention model 20 epochs to reach this level of validation loss.
+
+\subsection*{4}
+
+
+
+
+\section*{Part 3: Scaled Dot Product Attention}
+
+\subsection*{1}
 
 
 
